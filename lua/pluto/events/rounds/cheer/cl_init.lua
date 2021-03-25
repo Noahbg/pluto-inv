@@ -58,8 +58,9 @@ end
 local function RenderStats(state)
 	local y = ScrH() / 5
 	local x = 4
+	local _, h
 	if (state.cheer) then
-		local _, h = draw.SimpleTextOutlined(string.format("Cheer Level: %i!", state.cheer), "cheer_small", x, y, ttt.roles["S.A.N.T.A. Agent"].Color, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1, outline_text)
+		_, h = draw.SimpleTextOutlined(string.format("Cheer Level: %i!", state.cheer), "cheer_small", x, y, ttt.roles["S.A.N.T.A. Agent"].Color, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1, outline_text)
 		y = y + h
 	end
 
@@ -144,10 +145,14 @@ net.Receive("cheer_data", function()
 end)
 
 ROUND:Hook("TTTBeginRound", function(self, state)
-	EmitSound("pluto/cheersong.ogg", vector_origin, -2, CHAN_STATIC, 1)
-	timer.Simple(85, function()
-		EmitSound("pluto/cheersong.ogg", vector_origin, -2, CHAN_STATIC, 1)
-	end)
+	if (not timer.Exists("cheer_song")) then
+		EmitSound("pluto/cheersong.ogg", vector_origin, -2, CHAN_STATIC, 0.8)
+		timer.Create("vital_song", 85, 1, function()
+			if (ttt.GetCurrentRoundEvent() == "cheer" and ttt.GetRoundState() == ttt.ROUNDSTATE_ACTIVE) then
+				EmitSound("pluto/cheersong.ogg", vector_origin, -2, CHAN_STATIC, 0.8)
+			end
+		end)
+	end
 end)
 
 ROUND:Hook("HUDPaint", function(self, state)

@@ -8,6 +8,8 @@ for _, event in ipairs {
 	"posteaster",
 	"chimp",
 	"cheer",
+
+	"vital",
 } do
 	local folder = "pluto/events/rounds/" .. event .. "/"
 
